@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +19,18 @@ namespace ass1_ef__core.airlineModels
 
         public string gender { get; set; }
         public int al_id { get; set; }
+
+      
+
+        public int AirlineId { get; set; }
+
+        [InverseProperty(nameof(airline.employees))]
+
+        public Airline airline { get; set; }
+
+
+
+        
 
     }
 }

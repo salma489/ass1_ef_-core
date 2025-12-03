@@ -11,8 +11,8 @@ using ass1_ef__core.DatabseContext;
 namespace ass1_ef__core.Migrations
 {
     [DbContext(typeof(AirlineDbContext))]
-    [Migration("20251115180436_CreateAirlineDatabase")]
-    partial class CreateAirlineDatabase
+    [Migration("20251201172332_initialcreate")]
+    partial class initialcreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,21 @@ namespace ass1_ef__core.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("AirCraftRoute", b =>
+                {
+                    b.Property<int>("airCraftsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("routesid")
+                        .HasColumnType("int");
+
+                    b.HasKey("airCraftsId", "routesid");
+
+                    b.HasIndex("routesid");
+
+                    b.ToTable("AirCraftRoute");
+                });
+
             modelBuilder.Entity("ass1_ef__core.airlineModels.AirCraft", b =>
                 {
                     b.Property<int>("Id")
@@ -32,26 +47,22 @@ namespace ass1_ef__core.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("al_id")
+                    b.Property<int>("airlineid")
                         .HasColumnType("int");
 
                     b.Property<string>("assistant")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("capacity")
                         .HasColumnType("int");
 
                     b.Property<string>("host1")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("host2")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("maj_pilot")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("model")
@@ -59,6 +70,8 @@ namespace ass1_ef__core.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("airlineid");
 
                     b.ToTable("AirCrafts");
                 });
@@ -75,7 +88,7 @@ namespace ass1_ef__core.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Const_Person")
+                    b.Property<string>("ContactPerson")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -95,6 +108,9 @@ namespace ass1_ef__core.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<int>("AirlineId")
+                        .HasColumnType("int");
 
                     b.Property<string>("address")
                         .IsRequired()
@@ -126,7 +142,31 @@ namespace ass1_ef__core.Migrations
 
                     b.HasKey("id");
 
+                    b.HasIndex("AirlineId");
+
                     b.ToTable("Employees");
+                });
+
+            modelBuilder.Entity("ass1_ef__core.airlineModels.Phone", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AirlineId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AirlineId");
+
+                    b.ToTable("Phones");
                 });
 
             modelBuilder.Entity("ass1_ef__core.airlineModels.Route", b =>
@@ -169,6 +209,9 @@ namespace ass1_ef__core.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("airlinid")
+                        .HasColumnType("int");
+
                     b.Property<int>("al_id")
                         .HasColumnType("int");
 
@@ -181,7 +224,110 @@ namespace ass1_ef__core.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("airlinid");
+
                     b.ToTable("Transactions");
+                });
+
+            modelBuilder.Entity("AirCraftRoute", b =>
+                {
+                    b.HasOne("ass1_ef__core.airlineModels.AirCraft", null)
+                        .WithMany()
+                        .HasForeignKey("airCraftsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ass1_ef__core.airlineModels.Route", null)
+                        .WithMany()
+                        .HasForeignKey("routesid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ass1_ef__core.airlineModels.AirCraft", b =>
+                {
+                    b.HasOne("ass1_ef__core.airlineModels.Airline", "airCraftLine")
+                        .WithMany("aircrafts")
+                        .HasForeignKey("airlineid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("ass1_ef__core.airlineModels.Crew", "crew", b1 =>
+                        {
+                            b1.Property<int>("AirCraftId")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("assis_pilot")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("host1")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("host2")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("maj_pilot")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("AirCraftId");
+
+                            b1.ToTable("AirCrafts");
+
+                            b1.WithOwner()
+                                .HasForeignKey("AirCraftId");
+                        });
+
+                    b.Navigation("airCraftLine");
+
+                    b.Navigation("crew");
+                });
+
+            modelBuilder.Entity("ass1_ef__core.airlineModels.Employee", b =>
+                {
+                    b.HasOne("ass1_ef__core.airlineModels.Airline", "airline")
+                        .WithMany("employees")
+                        .HasForeignKey("AirlineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("airline");
+                });
+
+            modelBuilder.Entity("ass1_ef__core.airlineModels.Phone", b =>
+                {
+                    b.HasOne("ass1_ef__core.airlineModels.Airline", "Airline")
+                        .WithMany("Phones")
+                        .HasForeignKey("AirlineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Airline");
+                });
+
+            modelBuilder.Entity("ass1_ef__core.airlineModels.Transaction", b =>
+                {
+                    b.HasOne("ass1_ef__core.airlineModels.Airline", "airlinetransaction")
+                        .WithMany("transactions")
+                        .HasForeignKey("airlinid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("airlinetransaction");
+                });
+
+            modelBuilder.Entity("ass1_ef__core.airlineModels.Airline", b =>
+                {
+                    b.Navigation("Phones");
+
+                    b.Navigation("aircrafts");
+
+                    b.Navigation("employees");
+
+                    b.Navigation("transactions");
                 });
 #pragma warning restore 612, 618
         }

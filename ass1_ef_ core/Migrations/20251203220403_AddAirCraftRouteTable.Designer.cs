@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ass1_ef__core.DatabseContext;
 
@@ -10,9 +11,11 @@ using ass1_ef__core.DatabseContext;
 namespace ass1_ef__core.Migrations
 {
     [DbContext(typeof(AirlineDbContext))]
-    partial class AirlineDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251203220403_AddAirCraftRouteTable")]
+    partial class AddAirCraftRouteTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -76,7 +79,7 @@ namespace ass1_ef__core.Migrations
 
                     b.HasIndex("RouteId");
 
-                    b.ToTable("AirCraftRoutes");
+                    b.ToTable("AirCraftRoute");
                 });
 
             modelBuilder.Entity("ass1_ef__core.airlineModels.Airline", b =>
